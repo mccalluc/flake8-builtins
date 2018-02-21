@@ -67,17 +67,30 @@ class TestBuiltins(unittest.TestCase):
         ret = [c for c in checker.run()]
         self.assert_codes(ret, ['A003'])
 
-    def test_argument_message(self):
+    def test_argument_definition_message(self):
         tree = ast.parse('def bla(list):\n    a = 4')
         checker = BuiltinsChecker(tree, '/home/script.py')
         ret = [c for c in checker.run()]
         self.assert_codes(ret, ['A002'])
 
-    def test_keyword_argument_message(self):
+    def test_keyword_argument_definition_message(self):
         tree = ast.parse('def bla(dict=3):\n    b = 4')
         checker = BuiltinsChecker(tree, '/home/script.py')
         ret = [c for c in checker.run()]
         self.assert_codes(ret, ['A002'])
+
+    def test_keyword_argument_usage_message(self):
+        # TODO: Why can't I reproduce the failure I see in my own code?
+        tree = ast.parse('''
+class VisLayout(VisBase, ResourceLoader):
+    def _hidden_div(self):
+        return html.Div(
+            [html.Div(id='selected-conditions-ids-json')]
+        )
+        ''')
+        checker = BuiltinsChecker(tree, '/home/script.py')
+        ret = [c for c in checker.run()]
+        self.assert_codes(ret, ['A004'])
 
     def test_no_error(self):
         tree = ast.parse('def bla(first):\n    b = 4')
