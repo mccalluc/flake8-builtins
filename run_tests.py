@@ -3,14 +3,19 @@ from flake8_builtins import BuiltinsChecker
 
 import ast
 import mock
+import sys
 import unittest
 
 
 class TestBuiltins(unittest.TestCase):
-    def assert_codes(self, ret, codes):
-        self.assertEqual(len(ret), len(codes))
-        for item, code in zip(ret, codes):
-            self.assertTrue(item[2].startswith(code + ' '))
+    def assert_codes(self, returns, codes):
+        if sys.version_info >= (3, 2):
+            return_codes = [r[2].split(' ')[0] for r in returns]
+            self.assertCountEqual(return_codes, codes)
+        else:
+            # The same check, but only reports first mismatch
+            for item, code in zip(returns, codes):
+                self.assertTrue(item[2].startswith(code + ' '))
 
     def test_builtin_top_level(self):
         tree = ast.parse('max = 4')
@@ -81,13 +86,7 @@ class TestBuiltins(unittest.TestCase):
 
     def test_keyword_argument_usage_message(self):
         # TODO: Why can't I reproduce the failure I see in my own code?
-        tree = ast.parse('''
-class VisLayout(VisBase, ResourceLoader):
-    def _hidden_div(self):
-        return html.Div(
-            [html.Div(id='selected-conditions-ids-json')]
-        )
-        ''')
+        tree = ast.parse('bla(dict=3)')
         checker = BuiltinsChecker(tree, '/home/script.py')
         ret = [c for c in checker.run()]
         self.assert_codes(ret, ['A004'])

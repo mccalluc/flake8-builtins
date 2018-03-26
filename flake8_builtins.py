@@ -45,7 +45,6 @@ class BuiltinsChecker(object):
                           'renaming the class attribute'
     argument_use_msg = 'A004 "{0}" is used as an argument and thus shadows a ' \
                        'python builtin, consider renaming the argument'
-                       # TODO: Use this
 
     def __init__(self, tree, filename):
         self.tree = tree
@@ -69,6 +68,9 @@ class BuiltinsChecker(object):
 
             elif isinstance(statement, ast.FunctionDef):
                 value = self.check_function_definition(statement)
+
+            elif isinstance(statement, ast.Call):
+                value = self.check_call(statement)
 
             if value:
                 for line, offset, msg, rtype in value:
@@ -123,3 +125,15 @@ class BuiltinsChecker(object):
                         self.argument_def_msg.format(arg.id),
                         type(self),
                     )
+
+    def check_call(self, statement):
+        for kw in statement.keywords:
+            if kw.arg in BUILTINS:
+                line = statement.lineno
+                offset = statement.col_offset
+                yield (
+                    line,
+                    offset,
+                    self.argument_use_msg.format(kw.arg),
+                    type(self)
+                )
