@@ -40,7 +40,7 @@ setup(
     author='Gil Forcada',
     author_email='gil.gnome@gmail.com',
     url='https://github.com/gforcada/flake8-builtins',
-    license='GPL version 2',   # noqa: A004
+    #license='GPL version 2',   # noqa: A004
     py_modules=['flake8_builtins', ],
     include_package_data=True,
     test_suite='run_tests',
