@@ -43,8 +43,8 @@ class BuiltinsChecker(object):
                        'argument'
     class_attribute_msg = 'A003 "{0}" is a python builtin, consider ' \
                           'renaming the class attribute'
-    argument_use_msg = 'A004 "{0}" is used as an argument and thus shadows a ' \
-                       'python builtin, consider renaming the argument'
+    argument_use_msg = 'A004 "{0}" is used as an argument and thus shadows ' \
+                       'a python builtin, consider renaming the argument'
 
     def __init__(self, tree, filename):
         self.tree = tree
@@ -135,5 +135,5 @@ class BuiltinsChecker(object):
                     line,
                     offset,
                     self.argument_use_msg.format(kw.arg),
-                    type(self)
+                    type(self),
                 )

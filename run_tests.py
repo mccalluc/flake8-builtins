@@ -85,7 +85,6 @@ class TestBuiltins(unittest.TestCase):
         self.assert_codes(ret, ['A002'])
 
     def test_keyword_argument_usage_message(self):
-        # TODO: Why can't I reproduce the failure I see in my own code?
         tree = ast.parse('bla(dict=3)')
         checker = BuiltinsChecker(tree, '/home/script.py')
         ret = [c for c in checker.run()]
